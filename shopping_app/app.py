@@ -112,19 +112,19 @@ def upload():
         blob_client = container_client.get_blob_client(filename)
         blob_client.upload_blob(image, overwrite=True)
 
-        try:
-            queue_client.send_message(f"Image uploaded: {filename}")
-        except:
-            pass
+        image_url = blob_client.url   # ✅ important
 
         keyword = filename.split(".")[0]
-
         results = [p for p in products if keyword in p["name"].lower()]
 
         if not results:
             results = products
 
-        return render_template("index.html", products=results)
+        return render_template(
+            "index.html",
+            products=results,
+            image_url=image_url   # ✅ pass this
+        )
 
     return redirect("/")
 
